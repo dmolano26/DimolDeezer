@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DeezerServiceService } from '../services/deezer-service.service';
 
 @Component({
   selector: 'app-tab2',
@@ -6,7 +7,32 @@ import { Component } from '@angular/core';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
+  public profiles: any;
+  public users: any;
 
-  constructor() {}
+  constructor(private deezerService: DeezerServiceService) {
+    this.getProfiles();
+    this.users = [];
+  }
+
+  public getProfiles() {
+    this.deezerService.getProfiles()
+    .subscribe(
+      data => {
+        this.profiles = data;
+        for (var val of this.profiles) {
+          this.deezerService.getProfileDetail(val)
+          .subscribe(
+            perfil => {
+              this.users.push(perfil);
+            }
+          );
+        }
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
 
 }
